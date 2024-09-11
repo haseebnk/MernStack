@@ -17,20 +17,17 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
     try {
         await connectDb();
-        const server = app.listen(PORT, () => {
-            const address = server.address();
-            if (typeof address === 'string') {
-                console.log(`Server is running on ${address}`);
-            } else if (address && typeof address === 'object') {
-                const host = address.address === '::' ? 'localhost' : address.address;
-                const port = address.port;
-                if (host === 'localhost') {
-                    console.log(`Server is running on http://localhost:${port}`);
-                } else {
-                    console.log(`Server is running on http://${host}:${port}`);
-                }
+        app.listen(PORT, () => {
+            console.log(`Server is running on port: ${PORT}`);
+            
+            // Log info about the Railway deployment
+            if (process.env.RAILWAY_STATIC_URL) {
+                console.log('Deployed on Railway. Your API is available at:');
+                console.log(`${process.env.RAILWAY_STATIC_URL}/api/auth/*`);
+                console.log('Replace * with your specific endpoints');
             } else {
-                console.log(`Server is running on port ${PORT}`);
+                console.log('Running locally. API available at:');
+                console.log(`http://localhost:${PORT}/api/auth/*`);
             }
         });
     } catch (error) {
