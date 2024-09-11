@@ -5,6 +5,12 @@ const connectDb = require('./utils/db');
 
 app.use(express.json());
 
+// Log all incoming requests
+app.use((req, res, next) => {
+    console.log(`Received ${req.method} request for ${req.url}`);
+    next();
+});
+
 app.use('/api/auth', router);
 
 // Add a simple health check route
@@ -17,6 +23,15 @@ app.get('/', (req, res) => {
     });
 });
 
+// Catch-all route for debugging
+app.use('*', (req, res) => {
+    res.status(404).json({
+        message: "Route not found",
+        requestedUrl: req.originalUrl,
+        method: req.method
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
@@ -24,19 +39,10 @@ const startServer = async () => {
         await connectDb();
         app.listen(PORT, () => {
             console.log(`Server is running on port: ${PORT}`);
-            
-            // Log info about the deployment
             console.log('Environment:', process.env.NODE_ENV || 'development');
             console.log('RAILWAY_STATIC_URL:', process.env.RAILWAY_STATIC_URL || 'Not set');
-            
-            if (process.env.RAILWAY_STATIC_URL) {
-                console.log('Deployed on Railway. Your API is available at:');
-                console.log(`${process.env.RAILWAY_STATIC_URL}/api/auth/*`);
-                console.log('Replace * with your specific endpoints');
-            } else {
-                console.log('Running locally or RAILWAY_STATIC_URL is not set. API available at:');
-                console.log(`http://localhost:${PORT}/api/auth/*`);
-            }
+            console.log('API available at:');
+            console.log(`https://${process.env.RAILWAY_STATIC_URL}/api/auth/*`);
         });
     } catch (error) {
         console.error("Failed to start the server:", error);
