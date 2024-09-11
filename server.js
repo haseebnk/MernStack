@@ -17,8 +17,21 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
     try {
         await connectDb();
-        app.listen(PORT, () => {
-            console.log(`Server is running on port: ${PORT}`);
+        const server = app.listen(PORT, () => {
+            const address = server.address();
+            if (typeof address === 'string') {
+                console.log(`Server is running on ${address}`);
+            } else if (address && typeof address === 'object') {
+                const host = address.address === '::' ? 'localhost' : address.address;
+                const port = address.port;
+                if (host === 'localhost') {
+                    console.log(`Server is running on http://localhost:${port}`);
+                } else {
+                    console.log(`Server is running on http://${host}:${port}`);
+                }
+            } else {
+                console.log(`Server is running on port ${PORT}`);
+            }
         });
     } catch (error) {
         console.error("Failed to start the server:", error);
