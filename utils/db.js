@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 
 
 // const URI = "mongodb+srv://jackcasidy00:Kaaambaaa123...@cluster0.x070k3g.mongodb.net/?appName=Cluster0"
-const URI = "mongodb+srv://jackcasidy00:Kaaambaaa123...@cluster0.x070k3g.mongodb.net/mernstack?retryWrites=true&w=majority";
-
+const URI = process.env.MONGODB_URI
 
 const connectDb = async () => {
     try {
