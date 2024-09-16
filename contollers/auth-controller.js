@@ -37,7 +37,7 @@ const register = async (req, res) => {
 // login logic
 
 
-const login = async (req, res) => {
+const login = async (req, res , next) => {
     try {
         const { email, password } = req.body
 
@@ -64,7 +64,8 @@ const login = async (req, res) => {
     }
     catch (error) {
         console.error("Error during Login:", error);
-        res.status(500).json({ message: "An error occurred during Login.", error: error.message });
+        // res.status(500).json({ message: "An error occurred during Login.", error: error.message });
+        next(error)
     }
 }
 
