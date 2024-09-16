@@ -10,7 +10,7 @@ const home = async (req, res) => {
     }
 };
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
     try {
         console.log(req.body);
         const { username, email, phone, password } = req.body;
@@ -30,14 +30,15 @@ const register = async (req, res) => {
         });
     } catch (error) {
         console.error("Error during registration:", error);
-        res.status(500).json({ message: "An error occurred during registration.", error: error.message });
+        next(error)
+        // res.status(500).json({ message: "An error occurred during registration.", error: error.message });
     }
 };
 
 // login logic
 
 
-const login = async (req, res , next) => {
+const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
 
@@ -58,7 +59,7 @@ const login = async (req, res , next) => {
                 userId: userExist._id.toString()
             });
         } else {
-            res.status(401).json({message:"Invalid email or passowrd"})
+            res.status(401).json({ message: "Invalid email or passowrd" })
         }
 
     }
